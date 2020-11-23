@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Stl.Fusion;
+using static System.Console;
 
 namespace UpdateExamples
 {
@@ -16,23 +18,26 @@ namespace UpdateExamples
             var stateFactory = sb.GetRequiredService<IStateFactory>();
             var myAggregateService = sb.GetRequiredService<MyAggregateService>();
 
+            async Task TestAsync(string testId)
+            {
+                var live = stateFactory.NewLive<string>((_, ct) => myAggregateService.AggregateAsync());
+                live.Updated += (s, _) => WriteLine($"{testId}: {s.Value}");
+                await Task.Delay(5000);
+                myAggregateService.UiInput = "New Value";
+                await Task.Delay(5000);
+            }
 
-            var live = stateFactory.NewLive<string>((_, ct) => myAggregateService.Aggregate());
-
-            live.Updated += (s, _) => Console.WriteLine(s.Value);
-
-            await Task.Delay(5000);
-
-            myAggregateService.UiInput = "New Value";
-
-            await Task.Delay(5000);
+            var tasks = new List<Task>();
+            for (var i = 0; i < 5; i++)
+                tasks.Add(Task.Run(() => TestAsync(i.ToString())));
+            await Task.WhenAll(tasks);
         }
     }
 
     public class MyAggregateService
     {
         private readonly MyService _myService;
-        private string _uiInput = "Some Value";
+        private string _uiInput = "Initial Value";
 
         public MyAggregateService(MyService myService)
         {
@@ -45,15 +50,14 @@ namespace UpdateExamples
             set
             {
                 _uiInput = value;
-                Computed.Invalidate(() => Aggregate());
+                Computed.Invalidate(() => AggregateAsync());
             }
         }
 
         [ComputeMethod]
-        public virtual async Task<string> Aggregate()
+        public virtual async Task<string> AggregateAsync()
         {
             var serviceResult = await _myService.GetWebApiResultAsync();
-
             return $"{serviceResult} - {_uiInput}";
         }
     }
@@ -99,15 +103,11 @@ namespace UpdateExamples
         [ComputeMethod(KeepAliveTime = 1, AutoInvalidateTime = 1)] // Caches WebAPI call result for 1 second
         protected virtual async Task<string> GetWebApiResultAsyncImpl()
         {
-            // Run the actual WebAPI request here
-            Console.WriteLine("Executing GetWebApiResultAsyncImpl");
-
+            WriteLine("Executing GetWebApiResultAsyncImpl");
             return "Test";
         }
 
         private bool IsChanged(string a, string b)
-        {
-            return a == b;
-        }
+            => a != b;
     }
 }
