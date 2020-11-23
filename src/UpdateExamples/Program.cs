@@ -21,7 +21,7 @@ namespace UpdateExamples
 
             async Task TestAsync(string testId)
             {
-                var live = stateFactory.NewLive<string>((_, ct) => myAggregateService.AggregateAsync());
+                using var live = stateFactory.NewLive<string>((_, ct) => myAggregateService.AggregateAsync());
                 live.Updated += (s, _) => WriteLine($"{testId}: {s.Value}");
                 await Task.Delay(5000);
                 myAggregateService.UiInput = "New Value";
