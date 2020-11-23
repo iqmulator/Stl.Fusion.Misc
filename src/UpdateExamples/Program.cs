@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Stl.Fusion;
@@ -64,6 +65,8 @@ namespace UpdateExamples
 
     public class MyService
     {
+        private Stopwatch _stopwatch = Stopwatch.StartNew();
+
         [ComputeMethod]
         public virtual async Task<string> GetWebApiResultAsync()
         {
@@ -104,7 +107,7 @@ namespace UpdateExamples
         protected virtual async Task<string> GetWebApiResultAsyncImpl()
         {
             WriteLine("Executing GetWebApiResultAsyncImpl");
-            return "Test";
+            return Math.Floor(_stopwatch.Elapsed.TotalSeconds / 3).ToString();
         }
 
         private bool IsChanged(string a, string b)
