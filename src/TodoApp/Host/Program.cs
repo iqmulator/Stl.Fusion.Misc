@@ -1,8 +1,11 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration.Memory;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Templates.Blazor3.Host;
+using TodoApp.Host;
+using TodoApp.Services;
 
 var host = Host.CreateDefaultBuilder()
     .ConfigureHostConfiguration(builder => {
@@ -24,10 +27,8 @@ var host = Host.CreateDefaultBuilder()
     .Build();
 
 // Ensure the DB is created
-/*
 var dbContextFactory = host.Services.GetRequiredService<IDbContextFactory<AppDbContext>>();
 await using var dbContext = dbContextFactory.CreateDbContext();
 await dbContext.Database.EnsureCreatedAsync();
-*/
 
 await host.RunAsync();

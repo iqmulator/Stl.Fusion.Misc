@@ -2,8 +2,8 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <RootNamespace>Templates.Blazor3.Host</RootNamespace>
-    <AssemblyName>Templates.Blazor3.Host</AssemblyName>
+    <RootNamespace>TodoApp.Host</RootNamespace>
+    <AssemblyName>TodoApp.Host</AssemblyName>
     <ServerGarbageCollection>true</ServerGarbageCollection>
   </PropertyGroup>
 

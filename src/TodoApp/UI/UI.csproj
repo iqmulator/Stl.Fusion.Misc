@@ -3,8 +3,8 @@
     <TargetFramework>net5.0</TargetFramework>
     <Nullable>enable</Nullable>
     <NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
-    <RootNamespace>Templates.Blazor3.UI</RootNamespace>
-    <AssemblyName>Templates.Blazor3.UI</AssemblyName>
+    <RootNamespace>TodoApp.UI</RootNamespace>
+    <AssemblyName>TodoApp.UI</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

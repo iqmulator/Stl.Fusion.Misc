@@ -4,12 +4,17 @@
     <TargetFramework>net5.0</TargetFramework>
     <Nullable>enable</Nullable>
     <OutputType>Library</OutputType>
-    <RootNamespace>Templates.Blazor3.Services</RootNamespace>
-    <AssemblyName>Templates.Blazor3.Services</AssemblyName>
+    <RootNamespace>TodoApp.Services</RootNamespace>
+    <AssemblyName>TodoApp.Services</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Abstractions\Abstractions.csproj" />
+    <ProjectReference Include="..\Helpers\Helpers.csproj" />
   </ItemGroup>
 
 </Project>

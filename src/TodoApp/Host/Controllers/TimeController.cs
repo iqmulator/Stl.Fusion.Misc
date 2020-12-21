@@ -3,9 +3,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Stl.Fusion.Server;
-using Templates.Blazor3.Abstractions;
+using TodoApp.Abstractions;
 
-namespace Templates.Blazor3.Host.Controllers
+namespace TodoApp.Host.Controllers
 {
     [Route("api/[controller]")]
     [ApiController, JsonifyErrors]

@@ -2,7 +2,7 @@ using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Templates.Blazor3.Host.Controllers
+namespace TodoApp.Host.Controllers
 {
     [Route("_blazorMode")]
     public class BlazorModeController : ControllerBase

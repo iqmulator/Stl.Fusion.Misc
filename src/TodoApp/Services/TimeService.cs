@@ -2,9 +2,9 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Stl.Fusion;
-using Templates.Blazor3.Abstractions;
+using TodoApp.Abstractions;
 
-namespace Templates.Blazor3.Services
+namespace TodoApp.Services
 {
     [ComputeService(typeof(ITimeService))]
     public class TimeService : ITimeService

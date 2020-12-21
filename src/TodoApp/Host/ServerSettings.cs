@@ -2,7 +2,7 @@ using System;
 using System.Text;
 using Stl.DependencyInjection;
 
-namespace Templates.Blazor3.Host
+namespace TodoApp.Host
 {
     [Settings("Server")]
     public class ServerSettings

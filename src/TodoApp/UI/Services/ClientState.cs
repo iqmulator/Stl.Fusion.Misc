@@ -5,7 +5,7 @@ using Stl.Fusion;
 using Stl.Fusion.Authentication;
 using Stl.Fusion.Blazor;
 
-namespace Templates.Blazor3.UI.Services
+namespace TodoApp.UI.Services
 {
     [Service(Lifetime = ServiceLifetime.Scoped)]
     public class ClientState : IDisposable

@@ -5,8 +5,8 @@
     <Nullable>enable</Nullable>
     <NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
     <OutputType>Library</OutputType>
-    <RootNamespace>Templates.Blazor3.Abstractions</RootNamespace>
-    <AssemblyName>Templates.Blazor3.Abstractions</AssemblyName>
+    <RootNamespace>TodoApp.Abstractions</RootNamespace>
+    <AssemblyName>TodoApp.Abstractions</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Templates.Blazor3.Host.Controllers
+namespace TodoApp.Host.Controllers
 {
     public class AuthController : Controller
     {

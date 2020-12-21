@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Stl.Fusion;
 
-namespace Templates.Blazor3.Abstractions
+namespace TodoApp.Abstractions
 {
     public interface ITimeService
     {

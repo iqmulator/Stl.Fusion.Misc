@@ -3,11 +3,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using RestEase;
 using Stl.Fusion.Client;
-using Templates.Blazor3.Abstractions;
+using TodoApp.Abstractions;
+using TodoApp.Services;
 
-namespace Templates.Blazor3.UI.Services
+namespace TodoApp.UI.Services
 {
-    [RestEaseReplicaService(typeof(ITimeService), Scope = Program.ClientSideScope)]
+    [RestEaseReplicaService(typeof(ITimeService), Scope = Module.ClientSideScope)]
     [BasePath("time")]
     public interface ITimeClient
     {

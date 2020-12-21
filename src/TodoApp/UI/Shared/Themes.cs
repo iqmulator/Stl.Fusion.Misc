@@ -1,6 +1,6 @@
 using MudBlazor;
 
-namespace Templates.Blazor3.UI.Shared
+namespace TodoApp.UI.Shared
 {
     public static class Themes
     {
