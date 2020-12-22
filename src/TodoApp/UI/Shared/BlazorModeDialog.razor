@@ -18,7 +18,7 @@
 @code {
     private static bool IsBlazorServer => OSInfo.Kind != OSKind.WebAssembly;
 
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
     private string IsBlazorServerSelected { get; set; } = IsBlazorServer.ToString();
 
     void Cancel() => MudDialog.Cancel();

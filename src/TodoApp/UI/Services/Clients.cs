@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using RestEase;
 using Stl.Fusion.Client;
 using TodoApp.Abstractions;
-using TodoApp.Services;
 
 namespace TodoApp.UI.Services
 {

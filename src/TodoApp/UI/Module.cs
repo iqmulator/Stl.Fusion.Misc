@@ -1,5 +1,4 @@
 using System;
-using System.Reflection;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -12,12 +11,16 @@ using Stl.Fusion.Blazor;
 using Stl.Fusion.Client;
 using TodoApp.Abstractions;
 
-namespace TodoApp.Services
+namespace TodoApp.UI
 {
     public class Module : ModuleBase
     {
         public const string ClientSideScope = nameof(ClientSideScope);
-        public WebAssemblyHostBuilder HostBuilder { get; init; }
+        public WebAssemblyHostBuilder HostBuilder { get; } = null!;
+
+        public Module(IServiceCollection services) : base(services) { }
+        public Module(WebAssemblyHostBuilder hostBuilder) : base(hostBuilder.Services)
+            => HostBuilder = hostBuilder;
 
         public override void ConfigureServices()
         {
@@ -37,11 +40,11 @@ namespace TodoApp.Services
                     var clientBaseUri = isFusionClient ? baseUri : apiBaseUri;
                     o.HttpClientActions.Add(client => client.BaseAddress = clientBaseUri);
                 });
-            var fusionAuth = fusion.AddAuthentication().AddClient().AddBlazor();
+            var fusionAuth = fusion.AddAuthentication().AddRestEaseClient().AddBlazor();
 
             // This method registers services marked with any of ServiceAttributeBase descendants, including:
             // [Service], [ComputeService], [RestEaseReplicaService], [LiveStateUpdater]
-            Services.AttributeBased(ClientSideScope).AddServicesFrom(GetType().Assembly);
+            Services.AttributeScanner(ClientSideScope).AddServicesFrom(GetType().Assembly);
             ConfigureSharedServices();
         }
 
@@ -60,7 +63,7 @@ namespace TodoApp.Services
 
             // This method registers services marked with any of ServiceAttributeBase descendants, including:
             // [Service], [ComputeService], [RestEaseReplicaService], [LiveStateUpdater]
-            Services.AttributeBased().AddServicesFrom(GetType().Assembly);
+            Services.AttributeScanner().AddServicesFrom(GetType().Assembly);
         }
     }
 }

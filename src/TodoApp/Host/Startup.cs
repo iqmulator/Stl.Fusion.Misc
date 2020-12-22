@@ -44,6 +44,10 @@ namespace TodoApp.Host
 
         public void ConfigureServices(IServiceCollection services)
         {
+            var uiModule = new TodoApp.UI.Module(services);
+            var servicesModule = new TodoApp.Services.Module(services);
+            var hostModule = new Module(services);
+
             services.AddResponseCompression(opts => {
                 opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
                     new[] { "application/octet-stream" });
@@ -74,13 +78,9 @@ namespace TodoApp.Host
             var fusionClient = fusion.AddRestEaseClient();
             var fusionAuth = fusion.AddAuthentication().AddServer();
 
-            // This method registers services marked with any of ServiceAttributeBase descendants, including:
-            // [Service], [ComputeService], [RestEaseReplicaService], [LiveStateUpdater]
-            services.AttributeBased()
-                .AddServicesFrom(typeof(TimeService).Assembly)
-                .AddServicesFrom(Assembly.GetExecutingAssembly());
-            // Registering shared services from the client
-            UI.Program.ConfigureSharedServices(services);
+            hostModule.ConfigureServices();
+            servicesModule.ConfigureServices();
+            uiModule.ConfigureSharedServices();
 
             services.AddAuthentication(options => {
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;

@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
     <RootNamespace>TodoApp.UI</RootNamespace>
@@ -13,7 +14,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="5.0.0" />
     <PackageReference Include="MudBlazor" Version="1.2.1" />
     <PackageReference Include="Pluralize.NET" Version="1.0.2" />
-    <PackageReference Include="Stl.Fusion.Blazor" Version="0.7.67" />
+    <PackageReference Include="Stl.Fusion.Blazor" Version="0.8.3" />
     <PackageReference Include="UAParser" Version="3.1.44" />
   </ItemGroup>
 

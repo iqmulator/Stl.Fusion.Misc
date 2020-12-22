@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Stl.OS;
-using TodoApp.Services;
 
 namespace TodoApp.UI
 {
@@ -17,8 +16,8 @@ namespace TodoApp.UI
                 throw new ApplicationException("This app runs only in browser.");
 
             var hostBuilder = WebAssemblyHostBuilder.CreateDefault(args);
-            var module = new Module() { HostBuilder = hostBuilder, Services = hostBuilder.Services };
-            module.ConfigureServices();
+            var uiModule = new Module(hostBuilder);
+            uiModule.ConfigureServices();
             hostBuilder.RootComponents.Add<App>("#app");
             var host = hostBuilder.Build();
 
