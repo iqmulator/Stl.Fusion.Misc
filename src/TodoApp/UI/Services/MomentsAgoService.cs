@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Pluralize.NET;
 using Stl.Async;
 using Stl.Fusion;
+using Stl.Time;
 
 namespace TodoApp.UI.Services
 {
@@ -10,19 +11,24 @@ namespace TodoApp.UI.Services
     [ComputeService]
     public class MomentsAgoService
     {
-        private readonly IPluralize _pluralize;
+        private IPluralize Pluralize { get; }
+        private IMomentClock Clock { get; }
 
-        public MomentsAgoService(IPluralize pluralize) => _pluralize = pluralize;
+        public MomentsAgoService(IPluralize pluralize, IMomentClock? clock = null)
+        {
+            Pluralize = pluralize;
+            Clock = clock ??= SystemClock.Instance;
+        }
 
         [ComputeMethod]
         public virtual Task<string> GetMomentsAgoAsync(DateTime time)
         {
-            var delta = DateTime.UtcNow - time.ToUniversalTime();
+            var delta = Clock.Now.ToDateTime() - time;
             if (delta < TimeSpan.Zero)
                 delta = TimeSpan.Zero;
             var (unit, unitName) = GetMomentsAgoUnit(delta);
             var unitCount = (int) (delta.TotalSeconds / unit.TotalSeconds);
-            var pluralizedUnitName = _pluralize.Format(unitName, unitCount);
+            var pluralizedUnitName = Pluralize.Format(unitName, unitCount);
             var result = $"{unitCount} {pluralizedUnitName} ago";
 
             // Invalidate the result when it's supposed to change

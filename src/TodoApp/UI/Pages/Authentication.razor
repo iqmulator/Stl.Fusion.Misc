@@ -18,9 +18,7 @@
 <h1>Authentication</h1>
 
 @if (error != null) {
-    <div class="alert alert-warning" role="alert">
-        Update error: @error.Message
-    </div>
+    <MudAlert Severity="Severity.Error">Update error: @error.Message</MudAlert>
 }
 
 <div class="alert alert-primary">
@@ -118,7 +116,9 @@
                 </div>
             </Authorized>
             <NotAuthorized>
-                <div class="mb-2"><button class="btn btn-secondary" @onclick="SignIn">Sign in</button></div>
+                    <MudButton Color="Color.Warning" OnClick="SignIn" Size="Size.Small">
+                        Sign in
+                    </MudButton>
             </NotAuthorized>
         </AuthorizeView>
     </MudCardContent>
@@ -139,9 +139,9 @@
 
     [CascadingParameter]
     private Task<AuthState> AuthStateTask { get; set; } = null!;
-    private AuthState AuthState { get; set; } = new AuthState(new User("")); // For SSB pre-render
+    private AuthState AuthState { get; set; } = new(new User("")); // For SSB pre-render
     private User User => AuthState.User;
-    private ConcurrentDictionary<string, UserAgent> UserAgentCache = new ConcurrentDictionary<string, UserAgent>();
+    private ConcurrentDictionary<string, UserAgent> UserAgentCache = new();
 
     protected override async Task OnParametersSetAsync() => AuthState = await AuthStateTask;
 
