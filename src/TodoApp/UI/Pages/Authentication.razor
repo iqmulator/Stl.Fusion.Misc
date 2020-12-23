@@ -29,7 +29,7 @@
         <a href="/composition" target="_blank">Composition example</a>
         in another window to see how authentication state is synchronized everywhere.
     </div>
-    <div>
+    <div class="mb-2">
         If authentication doesn't work, most likely you need to provide
         <code>ClientId</code> and <code>ClientSecret</code> for a GitHub application;
         you can create one:
@@ -37,76 +37,79 @@
     </div>
 </div>
 
-<div class="card">
-    <div class="card-body">
-        <div class="card-title">
+<MudCard Elevation="12" Class="mb-2">
+    <MudCardContent>
+        <MudText>
             Session properties:
-        </div>
-        <div class="card-text">
+        </MudText>
+        <MudText Typo="Typo.body2">
             <ul>
                 <li><code>Session.Id</code>: <b><code>@Session.Id</code></b></li>
             </ul>
-        </div>
-        <div class="card-title">
+        </MudText>
+        <MudDivider/>
+        <MudText>
             User properties:
-        </div>
-        <div class="card-text">
+        </MudText>
+        <MudText Typo="Typo.body2">
             <ul>
                 <li><code>User.Id</code>: <b><code>@User.Id</code></b></li>
                 <li><code>User.Name</code>: <b><code>@User.Name</code></b></li>
             </ul>
             @if (User.IsAuthenticated) {
-                <div class="card-subtitle">Claims:</div>
+                <MudDivider/>
+                <MudText>Claims:</MudText>
                 <ul>
                     @foreach (var (key, value) in User.Claims) {
-                        <li><code>@key</code>: <b><code>@value</code></b></li>
+                        <MudText Typo="Typo.body2">
+                            <li><code>@key</code>: <b><code>@value</code></b></li>
+                        </MudText>
                     }
                 </ul>
             }
-        </div>
+        </MudText>
         @if (User.IsAuthenticated && state.Count > 0) {
-            <div class="card-title">
+            <MudDivider/>
+            <MudText>
                 Sessions:
-            </div>
-            <div class="card-text">
-                <table class="table table-sm">
-                    <thead>
-                    <tr>
-                        <th scope="col">IP</th>
-                        <th scope="col">Browser</th>
-                        <th scope="col">Created</th>
-                        <th scope="col">Last Seen</th>
-                        <th scope="col"></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach (var session in state) {
-                        <tr @key="@session.Id">
-                            <td>@session.IPAddress</td>
-                            <td>@session.UserAgent</td>
-                            <td>@session.Created</td>
-                            <td>@session.LastSeen</td>
-                            <td>
-                                @if (session.IsCurrent) {
-                                    <span>Current</span>
-                                } else {
-                                    <button type="button" class="btn btn-sm btn-danger"
-                                            @onclick="_ => Kick(session.Id)">Kick</button>
-                                }
-                            </td>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
-            </div>
+            </MudText>
+            <MudText Typo="Typo.body2">
+                <MudTable Items="@state" Elevation="10">
+                    <HeaderContent>
+                        <MudTh>IP</MudTh>
+                        <MudTh>Browser</MudTh>
+                        <MudTh>Created</MudTh>
+                        <MudTh>Last Seen</MudTh>
+                        <MudTh></MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="IP">@context.IPAddress</MudTd>
+                        <MudTd DataLabel="Browser">@context.UserAgent</MudTd>
+                        <MudTd DataLabel="Created">@context.Created</MudTd>
+                        <MudTd DataLabel="Last Seen">@context.LastSeen</MudTd>
+                        <MudTd>
+                            @if (context.IsCurrent) {
+                                <MudAlert Elevation="10" Severity="Severity.Success" Variant="Variant.Filled" Dense="true" Style="Width: 100pt;">Current</MudAlert>
+
+                            } else {
+                                <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="_ => Kick(context.Id)">Kick</MudButton>
+                            }
+                        </MudTd>
+                    </RowTemplate>
+                </MudTable>
+            </MudText>
         }
-    </div> @* card-body *@
-    <div class="card-footer">
+    </MudCardContent> @* card-body *@
+    <MudCardContent>
         <AuthorizeView>
             <Authorized>
                 <div class="mb-2">
-                    <button type="button" class="btn btn-warning" @onclick="SignOut">Sign out</button>
-                    <button type="button" class="btn btn-danger" @onclick="SignOutEverywhere">Sign out everywhere</button>
+                    <MudButton Color="Color.Warning" Variant="Variant.Text" OnClick="SignOut" Size="Size.Small">
+                        Sign out
+                    </MudButton>
+                    <MudButton Color="Color.Warning" OnClick="SignOutEverywhere" Size="Size.Small">
+                        Sign out everywhere
+                    </MudButton>
                 </div>
                 <div class="alert alert-warning">
                     To sign out completely, you need to either sign out from GitHub,
@@ -118,8 +121,8 @@
                 <div class="mb-2"><button class="btn btn-secondary" @onclick="SignIn">Sign in</button></div>
             </NotAuthorized>
         </AuthorizeView>
-    </div>
-</div>
+    </MudCardContent>
+</MudCard>
 
 @code {
     public class SessionModel
