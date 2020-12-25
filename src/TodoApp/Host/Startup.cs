@@ -44,9 +44,8 @@ namespace TodoApp.Host
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var uiModule = new TodoApp.UI.Module(services);
+            var uiModule = new UI.Module(services);
             var servicesModule = new TodoApp.Services.Module(services);
-            var hostModule = new Module(services);
 
             services.AddResponseCompression(opts => {
                 opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
@@ -59,6 +58,10 @@ namespace TodoApp.Host
                 logging.SetMinimumLevel(LogLevel.Information);
                 logging.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Information);
             });
+
+            services.AttributeScanner().AddServicesFrom(GetType().Assembly);
+            servicesModule.ConfigureServices();
+            uiModule.ConfigureSharedServices();
 
             // DbContext & related services
             var appTempDir = PathEx.GetApplicationTempDirectory("", true);
@@ -77,10 +80,6 @@ namespace TodoApp.Host
             var fusionServer = fusion.AddWebSocketServer();
             var fusionClient = fusion.AddRestEaseClient();
             var fusionAuth = fusion.AddAuthentication().AddServer();
-
-            hostModule.ConfigureServices();
-            servicesModule.ConfigureServices();
-            uiModule.ConfigureSharedServices();
 
             services.AddAuthentication(options => {
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;

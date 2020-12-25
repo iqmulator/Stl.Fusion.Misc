@@ -2,12 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Reactive;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Stl.Async;
+using Stl.DependencyInjection;
 using Stl.Fusion;
 using Stl.Fusion.Authentication;
 using Stl.Fusion.Authentication.Internal;
@@ -18,6 +20,7 @@ using TodoApp.Helpers;
 namespace TodoApp.Services
 {
     [ComputeService]
+    [ServiceAlias(typeof(IServerSideAuthService), typeof(AppAuthService))]
     public class AppAuthService : DbServiceBase<AppDbContext>, IServerSideAuthService
     {
         protected Func<ISerializer<string>> SerializerFactory { get; }
@@ -79,7 +82,6 @@ namespace TodoApp.Services
             var now = Clock.Now.ToDateTime();
             sessionInfo = sessionInfo with { LastSeenAt = now };
 
-            var serializer = SerializerFactory.Invoke();
             await using var dbContext = CreateDbContext();
             await using var tx = await dbContext.Database.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
 
@@ -87,8 +89,7 @@ namespace TodoApp.Services
             dbSession.LastSeenAt = sessionInfo.LastSeenAt;
             dbSession.IPAddress = sessionInfo.IPAddress;
             dbSession.UserAgent = sessionInfo.UserAgent;
-            dbSession.ExtraPropertiesJson = serializer.Serialize(sessionInfo.ExtraProperties);
-            dbContext.Sessions.Update(dbSession);
+            dbSession.ExtraPropertiesJson = ToJson(sessionInfo.ExtraProperties!.ToDictionary(kv => kv.Key, kv => kv.Value));
 
             await dbContext.SaveChangesAsync(cancellationToken);
             await tx.CommitAsync(default);
@@ -184,6 +185,7 @@ namespace TodoApp.Services
                     Id = user.Id,
                     AuthenticationType = user.AuthenticationType,
                     Name = user.Name,
+                    ClaimsJson = ToJson(user.Claims.ToDictionary(kv => kv.Key, kv => kv.Value)),
                 };
                 await dbContext.Users.AddAsync(dbUser, cancellationToken);
             }
@@ -206,30 +208,34 @@ namespace TodoApp.Services
         }
 
         private User ToUser(DbUser dbUser)
-        {
-            var serializer = SerializerFactory.Invoke();
-            IReadOnlyDictionary<string, string> claims = string.IsNullOrEmpty(dbUser.ClaimsJson)
-                ? ImmutableDictionary<string, string>.Empty
-                : serializer.Deserialize<ReadOnlyDictionary<string, string>>(dbUser.ClaimsJson);
-            return new User(dbUser.AuthenticationType, dbUser.Id, dbUser.Name, claims);
-        }
+            => new(
+                dbUser.AuthenticationType, dbUser.Id, dbUser.Name,
+                new ReadOnlyDictionary<string, string>(
+                    FromJson<Dictionary<string, string>>(dbUser.ClaimsJson) ?? new()));
 
         private SessionInfo ToSessionInfo(DbSession dbSession)
-        {
-            var serializer = SerializerFactory.Invoke();
-            var extraProperties = string.IsNullOrEmpty(dbSession.ExtraPropertiesJson)
-                ? ImmutableDictionary<string, object>.Empty
-                : serializer
-                    .Deserialize<Dictionary<string, object>>(dbSession.ExtraPropertiesJson)
-                    .ToImmutableDictionary();
-            return new SessionInfo() {
+            => new() {
                 Id = dbSession.Id,
                 CreatedAt = dbSession.CreatedAt,
                 LastSeenAt = dbSession.LastSeenAt,
                 IPAddress = dbSession.IPAddress,
                 UserAgent = dbSession.UserAgent,
-                ExtraProperties = extraProperties,
+                ExtraProperties = new ReadOnlyDictionary<string, object>(
+                    FromJson<Dictionary<string, object>>(dbSession.ExtraPropertiesJson) ?? new()),
             };
+
+        private string ToJson<T>(T source)
+        {
+            if (Equals(source, default))
+                return "";
+            return SerializerFactory().Serialize(source);
+        }
+
+        private T? FromJson<T>(string json)
+        {
+            if (string.IsNullOrEmpty(json))
+                return default;
+            return SerializerFactory().Deserialize<T>(json);
         }
     }
 }

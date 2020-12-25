@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using TodoApp.Helpers;
 
 namespace TodoApp.Services
 {
@@ -8,8 +7,7 @@ namespace TodoApp.Services
         public DbSet<DbUser> Users { get; protected set; } = null!;
         public DbSet<DbSession> Sessions { get; protected set; } = null!;
 
-        public AppDbContext(DbContextOptions options) : base(options)
-            => this.DisableChangeTracking();
+        public AppDbContext(DbContextOptions options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
